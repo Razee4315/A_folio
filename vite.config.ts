@@ -4,13 +4,10 @@ import path from 'path';
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
-  // Load env file based on `mode` in the current directory.
-  // Set the third parameter to '' to load all env regardless of the `VITE_` prefix.
   const env = loadEnv(mode, process.cwd(), '');
   
-  // For GitHub Pages deployment - always use the base path in production
+  // Always use the repository name as base in production
   const isProduction = process.env.NODE_ENV === 'production' || env.NODE_ENV === 'production';
-  // Use the repository name as the base path in production
   const base = isProduction ? '/A_folio/' : '/';
   
   console.log('Vite config - isProduction:', isProduction);
@@ -38,6 +35,7 @@ export default defineConfig(({ mode }) => {
       emptyOutDir: true,
       rollupOptions: {
         output: {
+          // Ensure all assets are referenced with the correct base path
           assetFileNames: (assetInfo) => {
             if (!assetInfo.name) return 'assets/[name]-[hash][extname]';
             
@@ -53,12 +51,8 @@ export default defineConfig(({ mode }) => {
       },
     },
     define: {
-      'process.env': {
-        ...Object.entries(env).reduce<Record<string, string>>((prev, [key, val]) => {
-          prev[`process.env.${key}`] = `"${val}"`;
-          return prev;
-        }, {}),
-      },
+      'import.meta.env.BASE_URL': JSON.stringify(base),
+      'process.env.NODE_ENV': JSON.stringify(isProduction ? 'production' : 'development'),
     },
   };
 });
