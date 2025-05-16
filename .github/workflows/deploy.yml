@@ -28,10 +28,28 @@ jobs:
 
       - name: Build
         run: |
+          # Ensure dist directory exists
+          mkdir -p dist
           # Copy public files to dist
           cp -r public/* dist/ 2>/dev/null || :
-          NODE_ENV=production npm run build
+          
+          # Create a temporary index.html with the correct base href
+          sed 's|<base href=".*"|<base href="/A_folio/"|' index.html > index.tmp && mv index.tmp index.html
+          
+          # Build with production settings and base URL
+          NODE_ENV=production VITE_BASE_URL=/A_folio/ npm run build
+          
+          # Ensure .nojekyll file exists
           touch dist/.nojekyll
+          
+          # Verify the built index.html has the correct base path
+          if ! grep -q '<base href="/A_folio/"' dist/index.html; then
+            echo "Error: base href not set correctly in dist/index.html"
+            echo "Fixing base href in dist/index.html..."
+            sed -i 's|<base href=".*"|<base href="/A_folio/"|' dist/index.html
+          fi
+          
+          echo "Build completed successfully"
 
       - name: Deploy to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4

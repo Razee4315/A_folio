@@ -8,9 +8,13 @@ export default defineConfig(({ mode }) => {
   // Set the third parameter to '' to load all env regardless of the `VITE_` prefix.
   const env = loadEnv(mode, process.cwd(), '');
   
-  // For GitHub Pages deployment
-  const isProduction = env.NODE_ENV === 'production' || process.env.NODE_ENV === 'production';
+  // For GitHub Pages deployment - always use the base path in production
+  const isProduction = process.env.NODE_ENV === 'production' || env.NODE_ENV === 'production';
+  // Use the repository name as the base path in production
   const base = isProduction ? '/A_folio/' : '/';
+  
+  console.log('Vite config - isProduction:', isProduction);
+  console.log('Vite config - base:', base);
   
   return {
     base,
