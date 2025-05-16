@@ -4,10 +4,11 @@ import path from "path";
 
 // https://vitejs.dev/config/
 export default defineConfig(({ command, mode }) => {
-  const isProduction = mode === 'production';
+  // For GitHub Pages deployment
+  const base = process.env.NODE_ENV === 'production' ? '/A_folio/' : '/';
   
   return {
-    base: isProduction ? '/A_folio/' : '/',
+    base,
     server: {
       host: "::",
       port: 8080,
@@ -24,8 +25,8 @@ export default defineConfig(({ command, mode }) => {
       outDir: "dist",
       assetsDir: "assets",
       sourcemap: false,
-      minify: isProduction ? "esbuild" : false,
-      cssMinify: isProduction ? "lightningcss" : false,
+      minify: "esbuild",
+      cssMinify: true,
       emptyOutDir: true,
       rollupOptions: {
         output: {
