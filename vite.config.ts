@@ -1,31 +1,34 @@
-import { defineConfig } from "vite";
-import react from "@vitejs/plugin-react-swc";
-import path from "path";
+import { defineConfig, loadEnv } from 'vite';
+import react from '@vitejs/plugin-react-swc';
+import path from 'path';
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
+  // Load env file based on `mode` in the current directory.
+  // Set the third parameter to '' to load all env regardless of the `VITE_` prefix.
+  const env = loadEnv(mode, process.cwd(), '');
+  
   // For GitHub Pages deployment
-  const base = process.env.NODE_ENV === 'production' ? '/A_folio/' : '/';
+  const base = env.NODE_ENV === 'production' ? '/A_folio/' : '/';
   
   return {
     base,
     server: {
-      host: "::",
+      host: '::',
       port: 8080,
+      strictPort: true,
     },
-    plugins: [
-      react(),
-    ],
+    plugins: [react()],
     resolve: {
       alias: {
-        "@": path.resolve(__dirname, "./src"),
+        '@': path.resolve(__dirname, './src'),
       },
     },
     build: {
-      outDir: "dist",
-      assetsDir: "assets",
+      outDir: 'dist',
+      assetsDir: 'assets',
       sourcemap: false,
-      minify: "esbuild",
+      minify: 'esbuild',
       cssMinify: true,
       emptyOutDir: true,
       rollupOptions: {
@@ -45,7 +48,12 @@ export default defineConfig(({ mode }) => {
       },
     },
     define: {
-      'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'production'),
+      'process.env': {
+        ...Object.entries(env).reduce<Record<string, string>>((prev, [key, val]) => {
+          prev[`process.env.${key}`] = `"${val}"`;
+          return prev;
+        }, {}),
+      },
     },
   };
 });
