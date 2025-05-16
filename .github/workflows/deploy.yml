@@ -23,19 +23,13 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Install Vite GH Pages
-        run: npm install --save-dev vite-gh-pages
-
-      - name: Build
-        run: npm run build
-
-      - name: Deploy to GitHub Pages
+      - name: Build and Deploy
         run: |
           git config --global user.name "GitHub Actions"
           git config --global user.email "actions@github.com"
-          npx vite-gh-pages -d dist -b gh-pages -m "Deploy to GitHub Pages"
+          npm run deploy
 
       - name: Get the deployment URL
         run: |
           echo "Deployment URL: https://${{ github.repository_owner }}.github.io/A_folio/"
-          echo "::set-output name=url::https://${{ github.repository_owner }}.github.io/A_folio/"
+          echo "url=https://${{ github.repository_owner }}.github.io/A_folio/" >> $GITHUB_OUTPUT
