@@ -4,8 +4,21 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <base href="/A_folio/" />
+    <base href="/A_folio/" data-origin />
     <title>Aleena Tahir | Portfolio</title>
+    <script>
+      // Ensure base href is set correctly
+      (function() {
+        const base = document.querySelector('base[data-origin]');
+        if (base) {
+          const path = window.location.pathname;
+          const basePath = '/A_folio/';
+          if (!path.startsWith(basePath)) {
+            window.location.href = basePath + path.replace(/^\//, '');
+          }
+        }
+      })();
+    </script>
     <meta name="description" content="Aleena Tahir - Artificial Intelligence Student & Developer Portfolio" />
     <meta name="author" content="Aleena Tahir" />
 
