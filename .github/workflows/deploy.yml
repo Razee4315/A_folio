@@ -32,11 +32,23 @@ jobs:
           rm -rf dist
           mkdir -p dist
           
-          # Build the app
+          # Build the app (will also run the postbuild script)
           npm run build
           
-          # Create .nojekyll file
+          # Create .nojekyll file (in case the postbuild script missed it)
           touch dist/.nojekyll
+          
+          # Verify index.html has the correct base path
+          if grep -q '<base href="/A_folio/"' dist/index.html; then
+            echo "Base path set correctly in index.html"
+          else
+            echo "WARNING: Base path not found in index.html, trying to fix..."
+            sed -i 's|<head>|<head>\n    <base href="/A_folio/" />|' dist/index.html
+          fi
+          
+          # Debug: Show the content of index.html
+          echo "Displaying the first 20 lines of index.html:"
+          head -n 20 dist/index.html
           
           echo "Build completed successfully"
 
