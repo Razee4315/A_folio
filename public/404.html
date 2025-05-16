@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Redirecting...</title>
+    <script>
+      // Get the path from the URL and redirect to the app with the path
+      const path = window.location.pathname;
+      const base = '/A_folio';
+      // Remove the base if it's already in the path
+      const cleanPath = path.startsWith(base) ? path.slice(base.length) : path;
+      // Redirect to the app with the path
+      window.location.href = `${base}${cleanPath}${window.location.search}${window.location.hash}`;
+    </script>
+  </head>
+  <body>
+    <p>Redirecting...</p>
+  </body>
+</html>

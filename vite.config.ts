@@ -9,7 +9,8 @@ export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '');
   
   // For GitHub Pages deployment
-  const base = env.NODE_ENV === 'production' ? '/A_folio/' : '/';
+  const isProduction = env.NODE_ENV === 'production' || process.env.NODE_ENV === 'production';
+  const base = isProduction ? '/A_folio/' : '/';
   
   return {
     base,

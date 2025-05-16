@@ -28,7 +28,9 @@ jobs:
 
       - name: Build
         run: |
-          npm run build
+          # Copy public files to dist
+          cp -r public/* dist/ 2>/dev/null || :
+          NODE_ENV=production npm run build
           touch dist/.nojekyll
 
       - name: Deploy to GitHub Pages
