@@ -3,8 +3,8 @@ import react from "@vitejs/plugin-react-swc";
 import path from "path";
 
 // https://vitejs.dev/config/
-export default defineConfig(({ mode }) => ({
-  base: "/A_folio/", // Set to repository name for GitHub Pages deployment
+export default defineConfig(({ command }) => ({
+  base: command === 'build' ? '/A_folio/' : '/',
   server: {
     host: "::",
     port: 8080,
@@ -21,8 +21,22 @@ export default defineConfig(({ mode }) => ({
     outDir: "dist",
     assetsDir: "assets",
     sourcemap: false,
-    // Use esbuild for minification instead of terser
     minify: "esbuild",
     cssMinify: "lightningcss",
+    rollupOptions: {
+      output: {
+        assetFileNames: (assetInfo) => {
+          if (!assetInfo.name) return 'assets/[name]-[hash][extname]';
+          
+          const extType = assetInfo.name.split('.').pop()?.toLowerCase() || '';
+          const isImage = /(png|jpe?g|svg|gif|tiff|bmp|ico)$/i.test(extType);
+          const dir = isImage ? 'img' : extType;
+          
+          return `assets/${dir}/[name]-[hash][extname]`;
+        },
+        chunkFileNames: 'assets/js/[name]-[hash].js',
+        entryFileNames: 'assets/js/[name]-[hash].js',
+      },
+    },
   },
 }));
